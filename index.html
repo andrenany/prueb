@@ -1,823 +1,119 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Control de Inventarios - Maestranzas Unidos S.A.</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-            overflow: hidden;
-        }
-
-        .presentation-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .slide {
-            display: none;
-            width: 95%;
-            max-width: 1200px;
-            height: 90vh;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 40px;
-            animation: slideIn 0.5s ease-in-out;
-        }
-
-        .slide.active {
-            display: block;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h1 {
-            color: #2c3e50;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            text-align: center;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 15px;
-        }
-
-        h2 {
-            color: #34495e;
-            font-size: 2em;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        h3 {
-            color: #2980b9;
-            font-size: 1.5em;
-            margin-bottom: 15px;
-            margin-top: 25px;
-        }
-
-        .company-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .company-logo {
-            font-size: 3em;
-            font-weight: bold;
-            color: #e74c3c;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .team-member {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #3498db;
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .metric-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            transform: scale(1);
-            transition: transform 0.3s ease;
-        }
-
-        .metric-card:hover {
-            transform: scale(1.05);
-        }
-
-        .metric-number {
-            font-size: 2.5em;
-            font-weight: bold;
-            display: block;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 30px;
-            background: #ecf0f1;
-            border-radius: 15px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
-            border-radius: 15px;
-            transition: width 0.5s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-
-        .backlog-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            font-size: 0.9em;
-        }
-
-        .backlog-table th,
-        .backlog-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        .backlog-table th {
-            background: #3498db;
-            color: white;
-        }
-
-        .priority-must { background: #e74c3c; color: white; }
-        .priority-should { background: #f39c12; color: white; }
-        .priority-could { background: #27ae60; color: white; }
-        .priority-would { background: #9b59b6; color: white; }
-
-        .sprint-timeline {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .sprint-card {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            border-top: 4px solid #3498db;
-            text-align: center;
-        }
-
-        .controls {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .btn:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        .slide-counter {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-size: 14px;
-        }
-
-        .problem-list {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #e74c3c;
-        }
-
-        .solution-list {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #27ae60;
-        }
-
-        .conclusion-highlight {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        ul {
-            padding-left: 20px;
-        }
-
-        li {
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
-
-        p {
-            line-height: 1.8;
-            margin-bottom: 15px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Informe Proyecto - Maestranzas Unidos S.A.</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background-color: #003366;
+      color: white;
+      padding: 1em 2em;
+    }
+    h1, h2, h3 {
+      color: #003366;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 2em auto;
+      background: white;
+      padding: 2em;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    section {
+      margin-bottom: 2em;
+    }
+    ul {
+      padding-left: 1.2em;
+    }
+    footer {
+      background-color: #003366;
+      color: white;
+      text-align: center;
+      padding: 1em;
+      font-size: 0.9em;
+    }
+  </style>
 </head>
 <body>
-    <div class="presentation-container">
-        <!-- Slide 1: Portada -->
-        <div class="slide active">
-            <div class="company-header">
-                <div class="company-logo">Maestranzas Unidos S.A.</div>
-                <h1>Sistema de Control de Inventarios</h1>
-                <h2>Evaluación Parcial N°4 EA2</h2>
-            </div>
-            
-            <div class="team-grid">
-                <div class="team-member">
-                    <h3>Equipo de Desarrollo</h3>
-                    <ul>
-                        <li><strong>Esteban Enrique Parra Ruiz</strong> - Backend Developer</li>
-                        <li><strong>Alan Vega Cosio</strong> - Product Owner</li>
-                        <li><strong>Fanny Andreina Araujo Linares</strong> - Scrum Master</li>
-                    </ul>
-                </div>
-                <div class="team-member">
-                    <h3>Especialistas</h3>
-                    <ul>
-                        <li><strong>Rafael Sebastian Pereira Barrientos</strong> - Full-Stack Developer</li>
-                        <li><strong>Nicolás Gabriel Bahamonde Contre</strong> - QA Tester</li>
-                        <li><strong>Hardy Esteban Vega Almonacid</strong> - Frontend Developer</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="conclusion-highlight">
-                <h3>Metodología Scrum | 6 Meses | 12 Sprints</h3>
-                <p>Transformación Digital para la Gestión de Inventarios</p>
-            </div>
-        </div>
+  <header>
+    <h1>Proyecto: Sistema de Control de Inventario</h1>
+    <p>Maestranzas Unidos S.A.</p>
+  </header>
 
-        <!-- Slide 2: Problemática -->
-        <div class="slide">
-            <h1>Problemática Actual</h1>
-            
-            <div class="problem-list">
-                <h3>🔍 Desafíos Identificados</h3>
-                <ul>
-                    <li><strong>Dependencia de procesos manuales</strong> que generan ineficiencias significativas</li>
-                    <li><strong>Errores de registro</strong> frecuentes en el inventario</li>
-                    <li><strong>Retrasos operativos</strong> que afectan la productividad</li>
-                    <li><strong>Incremento en costos</strong> asociados a la gestión de inventarios</li>
-                    <li><strong>Crecimiento exponencial</strong> del inventario de piezas y componentes</li>
-                </ul>
-            </div>
+  <div class="container">
+    <section>
+      <h2>Integrantes del Equipo</h2>
+      <ul>
+        <li>Esteban Enrique Parra Ruiz</li>
+        <li>Alan Vega Cosio</li>
+        <li>Fanny Andreina Araujo Linares</li>
+        <li>Rafael Sebastián Pereira Barrientos</li>
+        <li>Nicolás Gabriel Bahamonde Contre</li>
+        <li>Hardy Esteban Vega Almonacid</li>
+      </ul>
+    </section>
 
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <span class="metric-number">6</span>
-                    <div>Meses de Proyecto</div>
-                </div>
-                <div class="metric-card">
-                    <span class="metric-number">105</span>
-                    <div>Puntos de Historia</div>
-                </div>
-                <div class="metric-card">
-                    <span class="metric-number">12</span>
-                    <div>Sprints Planificados</div>
-                </div>
-                <div class="metric-card">
-                    <span class="metric-number">10</span>
-                    <div>Historias de Usuario</div>
-                </div>
-            </div>
-        </div>
+    <section>
+      <h2>Resumen Ejecutivo</h2>
+      <p>
+        El proyecto busca optimizar la gestión del inventario de Maestranzas Unidos S.A. mediante un sistema digital escalable, seguro e intuitivo, implementado bajo metodología Scrum. Se abordaron funcionalidades críticas como el registro de piezas, alertas automáticas y control de acceso, entregando valor temprano y aumentando la eficiencia operativa.
+      </p>
+    </section>
 
-        <!-- Slide 3: Solución Propuesta -->
-        <div class="slide">
-            <h1>Solución Propuesta</h1>
-            
-            <div class="solution-list">
-                <h3>🚀 Sistema de Control de Inventarios</h3>
-                <ul>
-                    <li><strong>Registro detallado</strong> de piezas y componentes con información completa</li>
-                    <li><strong>Ubicación física exacta</strong> de cada producto en el almacén</li>
-                    <li><strong>Alertas automáticas</strong> para niveles críticos de stock</li>
-                    <li><strong>Seguimiento de lotes</strong> y fechas de vencimiento</li>
-                    <li><strong>Informes personalizados</strong> para toma de decisiones</li>
-                    <li><strong>Integración con sistemas</strong> de compra y proveedores</li>
-                </ul>
-            </div>
+    <section>
+      <h2>Metodología</h2>
+      <p>
+        Se aplicó Scrum durante 6 meses distribuidos en 12 sprints. Se utilizó priorización MoSCoW, Planning Poker para estimaciones y una velocidad proyectada de 9.8 puntos por sprint. El equipo se estructuró con roles definidos: Product Owner, Scrum Master y un equipo técnico multidisciplinario.
+      </p>
+    </section>
 
-            <h3>📊 Beneficios Esperados</h3>
-            <div class="team-grid">
-                <div class="team-member">
-                    <h4>Operacionales</h4>
-                    <ul>
-                        <li>Reducción de errores manuales</li>
-                        <li>Optimización de tiempos</li>
-                        <li>Mejora en la trazabilidad</li>
-                    </ul>
-                </div>
-                <div class="team-member">
-                    <h4>Estratégicos</h4>
-                    <ul>
-                        <li>Decisiones basadas en datos</li>
-                        <li>Competitividad mejorada</li>
-                        <li>Escalabilidad del negocio</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+    <section>
+      <h2>Historias de Usuario Prioritarias (MVP)</h2>
+      <ul>
+        <li>HU1: Registro detallado del inventario (13 pts)</li>
+        <li>HU2: Ubicación física de productos (8 pts)</li>
+        <li>HU3: Alertas de stock crítico (5 pts)</li>
+        <li>HU10: Sistema escalable y seguro (21 pts)</li>
+      </ul>
+    </section>
 
-        <!-- Slide 4: Coordinación de Roles -->
-        <div class="slide">
-            <h1>Coordinación de Roles</h1>
-            
-            <div class="team-grid">
-                <div class="team-member">
-                    <h3>👨‍💼 Product Owner</h3>
-                    <p><strong>Alan Vega Cosio</strong></p>
-                    <ul>
-                        <li>Gestionar Product Backlog</li>
-                        <li>Definir criterios de aceptación</li>
-                        <li>Validar con stakeholders</li>
-                        <li>Maximizar valor del producto</li>
-                    </ul>
-                </div>
-                <div class="team-member">
-                    <h3>🎯 Scrum Master</h3>
-                    <p><strong>Fanny Andreina Araujo Linares</strong></p>
-                    <ul>
-                        <li>Facilitar ceremonias Scrum</li>
-                        <li>Eliminar impedimentos</li>
-                        <li>Entrenar en prácticas ágiles</li>
-                        <li>Monitorear métricas del equipo</li>
-                    </ul>
-                </div>
-            </div>
+    <section>
+      <h2>Estado del Proyecto</h2>
+      <p>
+        Al finalizar el Sprint 6, el proyecto presenta un 45% de avance. Se completaron 4 historias, 3 están en curso y 3 pendientes. El MVP fue entregado un sprint antes de lo previsto.
+      </p>
+    </section>
 
-            <h3>👥 Equipo de Desarrollo</h3>
-            <table class="backlog-table">
-                <thead>
-                    <tr>
-                        <th>Rol</th>
-                        <th>Responsable</th>
-                        <th>Especialidad</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Backend Developer</td>
-                        <td>Esteban Enrique Parra Ruiz</td>
-                        <td>APIs, Base de Datos, Seguridad</td>
-                    </tr>
-                    <tr>
-                        <td>Frontend Developer</td>
-                        <td>Hardy Esteban Vega Almonacid</td>
-                        <td>Interfaces, UX/UI, Dashboard</td>
-                    </tr>
-                    <tr>
-                        <td>QA Tester</td>
-                        <td>Nicolás Gabriel Bahamonde Contre</td>
-                        <td>Pruebas, Validación, Calidad</td>
-                    </tr>
-                    <tr>
-                        <td>Full-Stack Developer</td>
-                        <td>Rafael Sebastian Pereira Barrientos</td>
-                        <td>Desarrollo Integral, Integración</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <section>
+      <h2>Lecciones Aprendidas</h2>
+      <ul>
+        <li>Importancia de la estimación iterativa y el ajuste de velocidad.</li>
+        <li>Valor de la entrega incremental para gestión de riesgos.</li>
+        <li>Gestión proactiva de impedimentos técnicos y organizacionales.</li>
+        <li>Impacto positivo de QA desde el Sprint 1.</li>
+      </ul>
+    </section>
 
-        <!-- Slide 5: Product Backlog -->
-        <div class="slide">
-            <h1>Product Backlog Priorizado</h1>
-            
-            <table class="backlog-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Historia de Usuario</th>
-                        <th>Prioridad</th>
-                        <th>Puntos</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>HU1</td>
-                        <td>Registro detallado de inventario</td>
-                        <td><span class="priority-must">MUST</span></td>
-                        <td>13</td>
-                    </tr>
-                    <tr>
-                        <td>HU2</td>
-                        <td>Ubicación física de productos</td>
-                        <td><span class="priority-must">MUST</span></td>
-                        <td>8</td>
-                    </tr>
-                    <tr>
-                        <td>HU10</td>
-                        <td>Sistema seguro y escalable</td>
-                        <td><span class="priority-must">MUST</span></td>
-                        <td>21</td>
-                    </tr>
-                    <tr>
-                        <td>HU3</td>
-                        <td>Alertas de stock crítico</td>
-                        <td><span class="priority-should">SHOULD</span></td>
-                        <td>5</td>
-                    </tr>
-                    <tr>
-                        <td>HU4</td>
-                        <td>Seguimiento de lotes y vencimientos</td>
-                        <td><span class="priority-should">SHOULD</span></td>
-                        <td>8</td>
-                    </tr>
-                    <tr>
-                        <td>HU6</td>
-                        <td>Informes personalizados</td>
-                        <td><span class="priority-should">SHOULD</span></td>
-                        <td>8</td>
-                    </tr>
-                    <tr>
-                        <td>HU5</td>
-                        <td>Gestión de kits y categorías</td>
-                        <td><span class="priority-could">COULD</span></td>
-                        <td>8</td>
-                    </tr>
-                    <tr>
-                        <td>HU8</td>
-                        <td>Integración con sistemas de compra</td>
-                        <td><span class="priority-would">WOULD</span></td>
-                        <td>13</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <section>
+      <h2>Oportunidades Futuras</h2>
+      <ul>
+        <li>Integración con IoT para trazabilidad en tiempo real.</li>
+        <li>Aplicación de inteligencia artificial para predicción de demanda.</li>
+        <li>Dashboards avanzados y analítica predictiva.</li>
+      </ul>
+    </section>
+  </div>
 
-        <!-- Slide 6: Avance del Proyecto -->
-        <div class="slide">
-            <h1>Estado Actual del Proyecto</h1>
-            <h2>Sprint 6 - Semana 12</h2>
-            
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <span class="metric-number">44.8%</span>
-                    <div>Progreso General</div>
-                </div>
-                <div class="metric-card">
-                    <span class="metric-number">47</span>
-                    <div>Puntos Completados</div>
-                </div>
-                <div class="metric-card">
-                    <span class="metric-number">4/10</span>
-                    <div>Historias Terminadas</div>
-                </div>
-                <div class="metric-card">
-                    <span class="metric-number">10.2</span>
-                    <div>Velocidad Promedio</div>
-                </div>
-            </div>
-
-            <h3>📊 Distribución de Historias</h3>
-            <div class="team-grid">
-                <div class="team-member">
-                    <h4>✅ DONE (4 historias)</h4>
-                    <ul>
-                        <li>HU1: Registro detallado inventario (13 pts)</li>
-                        <li>HU2: Ubicación física productos (8 pts)</li>
-                        <li>HU3: Alertas stock crítico (5 pts)</li>
-                        <li>HU10: Sistema seguro y escalable (21 pts)</li>
-                    </ul>
-                </div>
-                <div class="team-member">
-                    <h4>🔄 DOING (3 historias)</h4>
-                    <ul>
-                        <li>HU4: Seguimiento lotes - 75%</li>
-                        <li>HU5: Gestión kits - 50%</li>
-                        <li>HU6: Informes personalizados - 25%</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: 44.8%">44.8% Completado</div>
-            </div>
-        </div>
-
-        <!-- Slide 7: Impedimentos y Riesgos -->
-        <div class="slide">
-            <h1>Gestión de Impedimentos</h1>
-            
-            <h3>🚫 Stoppers Técnicos</h3>
-            <div class="problem-list">
-                <ul>
-                    <li><strong>Integración con Sistema Legacy:</strong> Falta de APIs documentadas</li>
-                    <li><strong>Taxonomía de Categorías:</strong> Falta consenso en categorización</li>
-                    <li><strong>Requerimientos de Seguridad:</strong> Estándares más estrictos</li>
-                </ul>
-            </div>
-
-            <h3>🏢 Stoppers Organizacionales</h3>
-            <div class="problem-list">
-                <ul>
-                    <li><strong>Disponibilidad de Stakeholders:</strong> Alta carga operativa</li>
-                    <li><strong>Acceso a Producción:</strong> Restricciones de TI corporativa</li>
-                </ul>
-            </div>
-
-            <h3>💡 Plan de Mitigación</h3>
-            <table class="backlog-table">
-                <thead>
-                    <tr>
-                        <th>Stopper</th>
-                        <th>Probabilidad</th>
-                        <th>Impacto</th>
-                        <th>Estrategia</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Integración Legacy</td>
-                        <td>Alta</td>
-                        <td>Alto</td>
-                        <td>Middleware personalizado</td>
-                    </tr>
-                    <tr>
-                        <td>Taxonomía Categorías</td>
-                        <td>Media</td>
-                        <td>Medio</td>
-                        <td>Validación iterativa</td>
-                    </tr>
-                    <tr>
-                        <td>Disponibilidad Stakeholders</td>
-                        <td>Alta</td>
-                        <td>Medio</td>
-                        <td>Buffer de tiempo</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Slide 8: Lecciones Aprendidas -->
-        <div class="slide">
-            <h1>Lecciones Aprendidas</h1>
-            
-            <div class="team-grid">
-                <div class="team-member">
-                    <h3>📈 Gestión de Proyecto</h3>
-                    <ul>
-                        <li><strong>Planning Poker:</strong> Optimización de 118 a 105 puntos</li>
-                        <li><strong>Priorización MoSCoW:</strong> Valor temprano en 5 sprints</li>
-                        <li><strong>Gestión de Impedimentos:</strong> Scrum Master crucial</li>
-                    </ul>
-                </div>
-                <div class="team-member">
-                    <h3>⚙️ Aspectos Técnicos</h3>
-                    <ul>
-                        <li><strong>Arquitectura Escalable:</strong> Diseño desde Sprint 1</li>
-                        <li><strong>Testing Continuo:</strong> QA integrado reduce bugs</li>
-                        <li><strong>APIs RESTful:</strong> Facilita integraciones</li>
-                    </ul>
-                </div>
-            </div>
-
-            <h3>🔄 Cambio Organizacional</h3>
-            <div class="solution-list">
-                <ul>
-                    <li><strong>Resistencia al cambio:</strong> Más tiempo de adaptación necesario</li>
-                    <li><strong>Capacitación incremental:</strong> Más efectiva que sesiones intensivas</li>
-                    <li><strong>Diseño intuitivo:</strong> Reduce curva de aprendizaje</li>
-                </ul>
-            </div>
-
-            <h3>🚀 Oportunidades de Mejora</h3>
-            <div class="team-grid">
-                <div class="team-member">
-                    <h4>Corto Plazo</h4>
-                    <ul>
-                        <li>Integración con compras</li>
-                        <li>Dashboards ejecutivos</li>
-                        <li>Capacitación avanzada</li>
-                    </ul>
-                </div>
-                <div class="team-member">
-                    <h4>Largo Plazo</h4>
-                    <ul>
-                        <li>Tecnologías IoT</li>
-                        <li>Inteligencia Artificial</li>
-                        <li>Arquitectura cloud nativa</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 9: Métricas Finales -->
-        <div class="slide">
-            <h1>Métricas Finales del Proyecto</h1>
-            
-            <table class="backlog-table">
-                <thead>
-                    <tr>
-                        <th>Métrica</th>
-                        <th>Planificado</th>
-                        <th>Real</th>
-                        <th>Variación</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Duración Total</td>
-                        <td>6 meses</td>
-                        <td>6 meses</td>
-                        <td style="color: green;">0%</td>
-                    </tr>
-                    <tr>
-                        <td>Puntos de Historia</td>
-                        <td>118</td>
-                        <td>105</td>
-                        <td style="color: green;">-11%</td>
-                    </tr>
-                    <tr>
-                        <td>Velocidad Promedio</td>
-                        <td>9.8 puntos</td>
-                        <td>10.2 puntos</td>
-                        <td style="color: green;">+4%</td>
-                    </tr>
-                    <tr>
-                        <td>MVP Entregado</td>
-                        <td>Sprint 6</td>
-                        <td>Sprint 5</td>
-                        <td style="color: green;">+1 sprint</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="conclusion-highlight">
-                <h3>🎯 Estado del Proyecto</h3>
-                <p><strong>EN TIEMPO Y DENTRO DEL PRESUPUESTO</strong></p>
-                <p>Superando las expectativas iniciales en productividad y resultados funcionales</p>
-            </div>
-
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <span class="metric-number">100%</span>
-                    <div>Funcionalidades MUST</div>
-                </div>
-                <div class="metric-card">
-                    <span class="metric-number">85%</span>
-                    <div>Satisfacción del Cliente</div>
-                </div>
-                <div class="metric-card">
-                    <span class="metric-number">95%</span>
-                    <div>Calidad del Código</div>
-                </div>
-                <div class="metric-card">
-                    <span class="metric-number">0</span>
-                    <div>Bugs Críticos</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 10: Conclusiones -->
-        <div class="slide">
-            <h1>Conclusiones</h1>
-            
-            <div class="solution-list">
-                <h3>🏆 Logros Principales</h3>
-                <ul>
-                    <li><strong>Transformación Digital Exitosa:</strong> Migración de procesos manuales a sistema automatizado</li>
-                    <li><strong>Metodología Scrum Efectiva:</strong> Adaptabilidad y entregas incrementales de valor</li>
-                    <li><strong>Superación de Expectativas:</strong> Entrega anticipada del MVP y mejora en velocidad</li>
-                    <li><strong>Resolución de Problemas Críticos:</strong> Trazabilidad, seguridad y optimización logística</li>
-                </ul>
-            </div>
-
-            <div class="team-grid">
-                <div class="team-member">
-                    <h3>💼 Impacto Organizacional</h3>
-                    <ul>
-                        <li>Cultura de agilidad fortalecida</li>
-                        <li>Mejora continua institucionalizada</li>
-                        <li>Base para futuras transformaciones</li>
-                        <li>Competitividad mejorada</li>
-                    </ul>
-                </div>
-                <div class="team-member">
-                    <h3>🔮 Proyección Futura</h3>
-                    <ul>
-                        <li>Plataforma para IA e IoT</li>
-                        <li>Escalabilidad garantizada</li>
-                        <li>Modernización sostenible</li>
-                        <li>Precedente metodológico</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="conclusion-highlight">
-                <h3>✨ Resultado Final</h3>
-                <p>El proyecto no solo resolvió una necesidad operativa clave, sino que también sentó un precedente metodológico y estratégico para la modernización sostenible de Maestranzas Unidos S.A.</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="slide-counter">
-        <span id="currentSlide">1</span> / <span id="totalSlides">10</span>
-    </div>
-
-    <div class="controls">
-        <button class="btn" onclick="previousSlide()">← Anterior</button>
-        <button class="btn" onclick="nextSlide()">Siguiente →</button>
-    </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let currentSlideIndex = 0;
-        const slides = document.querySelectorAll('.slide');
-        const totalSlides = slides.length;
-        const currentSlideText = document.getElementById('currentSlide');
-
-        document.getElementById('totalSlides').textContent = totalSlides;
-
-        function showSlide(index) {
-            slides.forEach((slide, i) => {
-                slide.classList.remove('active');
-                if (i === index) {
-                    slide.classList.add('active');
-                }
-            });
-            currentSlideText.textContent = index + 1;
-        }
-
-        // Definir funciones globales
-        window.nextSlide = function () {
-            if (currentSlideIndex < totalSlides - 1) {
-                currentSlideIndex++;
-                showSlide(currentSlideIndex);
-            }
-        }
-
-        window.previousSlide = function () {
-            if (currentSlideIndex > 0) {
-                currentSlideIndex--;
-                showSlide(currentSlideIndex);
-            }
-        }
-
-        // Soporte para teclas
-        document.addEventListener('keydown', function (event) {
-            if (event.key === 'ArrowRight') {
-                nextSlide();
-            } else if (event.key === 'ArrowLeft') {
-                previousSlide();
-            }
-        });
-
-        // Mostrar la primera slide
-        showSlide(currentSlideIndex);
-    });
-</script>
-</body>
-</html>
-
-</body>
-</html>
-
+  <footer>
+    &copy; 2025 Maestranzas Unidos S.A. - Informe Proyecto EA2
+  </footer>
 </body>
 </html>
