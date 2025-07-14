@@ -767,53 +767,55 @@
     </div>
 
 <script>
-    let currentSlideIndex = 0;
-    const slides = document.querySelectorAll('.slide');
-    const totalSlides = slides.length;
-    const currentSlideText = document.getElementById('currentSlide');
+    document.addEventListener('DOMContentLoaded', function () {
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const currentSlideText = document.getElementById('currentSlide');
 
-    // Mostrar el número total de diapositivas
-    document.getElementById('totalSlides').textContent = totalSlides;
+        document.getElementById('totalSlides').textContent = totalSlides;
 
-    // Función para mostrar una diapositiva específica
-    function showSlide(index) {
-        slides.forEach((slide, i) => {
-            slide.classList.remove('active');
-            if (i === index) {
-                slide.classList.add('active');
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) {
+                    slide.classList.add('active');
+                }
+            });
+            currentSlideText.textContent = index + 1;
+        }
+
+        // Definir funciones globales
+        window.nextSlide = function () {
+            if (currentSlideIndex < totalSlides - 1) {
+                currentSlideIndex++;
+                showSlide(currentSlideIndex);
+            }
+        }
+
+        window.previousSlide = function () {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                showSlide(currentSlideIndex);
+            }
+        }
+
+        // Soporte para teclas
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'ArrowRight') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                previousSlide();
             }
         });
-        currentSlideText.textContent = index + 1;
-    }
 
-    // Función para ir a la siguiente diapositiva
-    function nextSlide() {
-        if (currentSlideIndex < totalSlides - 1) {
-            currentSlideIndex++;
-            showSlide(currentSlideIndex);
-        }
-    }
-
-    // Función para ir a la diapositiva anterior
-    function previousSlide() {
-        if (currentSlideIndex > 0) {
-            currentSlideIndex--;
-            showSlide(currentSlideIndex);
-        }
-    }
-
-    // Soporte para teclas del teclado: flechas izquierda y derecha
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'ArrowRight') {
-            nextSlide();
-        } else if (event.key === 'ArrowLeft') {
-            previousSlide();
-        }
+        // Mostrar la primera slide
+        showSlide(currentSlideIndex);
     });
-
-    // Mostrar la primera diapositiva al cargar la página
-    showSlide(currentSlideIndex);
 </script>
+</body>
+</html>
+
 </body>
 </html>
 
