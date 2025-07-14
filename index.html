@@ -766,29 +766,27 @@
         <button class="btn" onclick="nextSlide()">Siguiente →</button>
     </div>
 
-    <script>
-        let currentSlideIndex = 0;
-        const slides = document.querySelectorAll('.slide');
-        const totalSlides = slides.length;
-
-        document.getElementById('totalSlides').textContent = totalSlides;
-
-        function showSlide(index) {
-            slides.forEach(slide => slide
 <script>
     let currentSlideIndex = 0;
     const slides = document.querySelectorAll('.slide');
     const totalSlides = slides.length;
     const currentSlideText = document.getElementById('currentSlide');
 
+    // Mostrar el número total de diapositivas
     document.getElementById('totalSlides').textContent = totalSlides;
 
+    // Función para mostrar una diapositiva específica
     function showSlide(index) {
-        slides.forEach(slide => slide.classList.remove('active'));
-        slides[index].classList.add('active');
+        slides.forEach((slide, i) => {
+            slide.classList.remove('active');
+            if (i === index) {
+                slide.classList.add('active');
+            }
+        });
         currentSlideText.textContent = index + 1;
     }
 
+    // Función para ir a la siguiente diapositiva
     function nextSlide() {
         if (currentSlideIndex < totalSlides - 1) {
             currentSlideIndex++;
@@ -796,6 +794,7 @@
         }
     }
 
+    // Función para ir a la diapositiva anterior
     function previousSlide() {
         if (currentSlideIndex > 0) {
             currentSlideIndex--;
@@ -803,7 +802,7 @@
         }
     }
 
-    // Permitir navegación con teclas de flecha
+    // Soporte para teclas del teclado: flechas izquierda y derecha
     document.addEventListener('keydown', function (event) {
         if (event.key === 'ArrowRight') {
             nextSlide();
@@ -812,8 +811,11 @@
         }
     });
 
-    // Mostrar slide inicial
+    // Mostrar la primera diapositiva al cargar la página
     showSlide(currentSlideIndex);
 </script>
+</body>
+</html>
+
 </body>
 </html>
